@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>검과 마녀 · 세계의 탑</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#131316;color:#f6ede4;font:16px/1.55 "Malgun Gothic",system-ui,sans-serif}main{max-width:960px;margin:auto;padding:28px 20px 40px}
+header,.row,.fighters,.tools{display:flex;justify-content:space-between;align-items:center;gap:16px}h1,h2,p{margin:0}h1{font-size:clamp(28px,5vw,44px);letter-spacing:-.06em}h2{font-size:20px}.muted,small{color:#c6bab0}header{margin-bottom:20px}.wallet{color:#f9bf83;font-weight:bold;text-align:right;white-space:nowrap}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:#201d20;border:1px solid #4e4141;border-radius:18px;padding:20px;min-width:0}.arena{grid-column:1/-1;background:radial-gradient(ellipse at 32% 92%,#49332d,transparent 64%),#201d22} .fighters{margin:24px 0 16px;align-items:stretch}.fighter{width:50%}.glyph{display:grid;place-items:center;height:95px;margin-bottom:9px;background:#221d20b0;border:1px solid #65504c;border-radius:14px;color:#ffc58e;font-size:45px}.foe .glyph{color:#ffa49d}.hp{display:block;overflow:hidden;width:100%;height:9px;margin:7px 0;border-radius:99px;background:#463b40}.hp span{display:block;height:100%;background:#8ed5ac;transition:width .18s}.foe .hp span{background:#fd877d}.reels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.reels span{text-align:center;background:#151417;border:1px solid #65504c;border-radius:10px;padding:9px;color:#ffd0a1;font-weight:bold;min-height:44px}.reels.spinning span{animation:pulse .16s infinite alternate}@keyframes pulse{to{opacity:.48}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+button{font:inherit;cursor:pointer;border:1px solid #8a6a59;color:#f6ede4;background:#392f32;border-radius:9px;padding:8px 13px}button:focus-visible{outline:2px solid #b8efdc;outline-offset:3px}button:disabled{opacity:.48;cursor:default}.primary{width:100%;background:#ffbc80;color:#201517;font-weight:bold;border:0;padding:12px}.gear{display:grid;gap:9px;margin:12px 0}.gear>div,.offer{background:#181619;padding:9px 11px;border-radius:9px}.offer{display:grid;gap:8px}.offer .row{justify-content:flex-start;flex-wrap:wrap}.tools{justify-content:flex-start;flex-wrap:wrap;margin-top:16px}.notice{margin-top:10px;min-height:3em}.tag{color:#ffce9a}strong{overflow-wrap:anywhere}@media(max-width:640px){main{padding:18px 12px}.grid{grid-template-columns:1fr}.panel{padding:15px}.glyph{height:68px}.fighters{gap:8px}}
+
+:root{color-scheme:dark;--gold:#ffc581;--line:#50434b;--surface:#211d25}body{background:radial-gradient(ellipse at 50% 0,#30223a,transparent 62%),#111016}main{max-width:860px;padding-top:18px}header{margin-bottom:14px}h1{font-size:clamp(26px,5vw,38px);color:#ffd5a2;text-shadow:0 3px #3c2635}.wallet{background:#1c1821;border:1px solid var(--line);border-radius:12px;padding:6px 14px}.panel{background:var(--surface);border-color:var(--line);box-shadow:0 5px 0 #100e14}.arena{position:relative;overflow:hidden;padding:0;background:#282237}.arena .row{position:relative;z-index:1;padding:12px 18px;background:#18151fd9}.arena h2{font-size:17px}.arena .tag{background:#492f38;padding:3px 12px;border-radius:20px}.fighters{position:relative;isolation:isolate;margin:0;min-height:254px;padding:12px 14% 23px;gap:22%;align-items:end;background:radial-gradient(ellipse at 50% 60%,#ff9f6645,transparent 57%),linear-gradient(#281c35,#66405a 61%,#39303d 62%,#2a242e)}.fighters::before,.fighters::after{content:"";position:absolute;z-index:-1;pointer-events:none;inset:0}.fighters::before{background:#302439;clip-path:polygon(0 0,20% 0,17% 24%,11% 29%,8% 59%,0 69%,0 85%,100% 85%,100% 61%,92% 51%,86% 25%,79% 9%,78% 0,100% 0,100% 100%,0 100%)}.fighters::after{top:70%;background:repeating-linear-gradient(167deg,transparent 0 44px,#e39f752b 45px 48px,transparent 49px 73px),linear-gradient(#775052,#332834);clip-path:polygon(0 25%,20% 0,80% 0,100% 25%,100% 100%,0 100%)}.fighter{position:relative;text-align:center;min-width:0;flex:1;width:auto}.fighter strong{display:block;font-size:14px;color:#fff1d9}.hp{height:7px;margin:4px auto;max-width:135px}.arena #battleNote{padding:8px 18px;font-size:14px;background:#19151e;min-height:42px}.actor{position:relative;height:133px;display:grid;place-items:center;transform-origin:center bottom}.actor::before{content:"";position:absolute;width:92px;height:15px;bottom:3px;border-radius:50%;background:#140e18a6;filter:blur(2px)}.sprite{--armor:#597c91;--edge:#b6e1db;--dark:#243445;--visor:#70f0d4;position:relative;width:96px;height:112px;animation:breathe 1.5s ease-in-out infinite;filter:drop-shadow(3px 5px 0 #15121bae)}.foe .sprite{--armor:#96505d;--edge:#f5ad91;--dark:#4a283e;--visor:#ffd171;transform:scaleX(-1)}.foe[data-boss="true"] .actor{scale:1.14}.sprite i{position:absolute;display:block;border:3px solid var(--dark);background:linear-gradient(145deg,var(--edge),var(--armor) 44%,var(--dark));border-radius:5px;box-shadow:inset 0 2px #ffffff32}.sprite .head{width:48px;height:31px;left:21px;top:12px;clip-path:polygon(14% 0,83% 0,100% 25%,100% 80%,81% 100%,13% 100%,0 68%,0 28%)}.sprite .head::after{content:"";position:absolute;left:12px;right:0;top:9px;height:7px;background:var(--visor);box-shadow:0 0 8px var(--visor)}.sprite .body{width:46px;height:39px;left:20px;top:40px}.sprite .body::after{content:"";position:absolute;inset:9px 14px;background:var(--visor);border-radius:50%;box-shadow:0 0 9px var(--visor)}.sprite .leg{width:18px;height:31px;left:22px;top:72px;rotate:8deg}.sprite .leg.second{left:48px;rotate:-10deg}.sprite .arm{width:18px;height:37px;left:61px;top:43px;rotate:-17deg;transform-origin:top center}.sprite .blade{width:13px;height:46px;left:76px;top:37px;rotate:32deg;background:linear-gradient(90deg,#ffd782,#fff0b1 45%,#d99257 55%);clip-path:polygon(50% 0,100% 24%,82% 90%,50% 100%,0 90%,0 24%)}.foe .blade{background:#ee897e}.actor.attack{animation:lunge .32s ease-out}.foe .actor.attack{animation:counter .32s .14s ease-out}.actor.attack .arm{animation:swing .32s ease-out}.foe .actor.attack .arm{animation-delay:.14s}.actor.attack .blade{animation:slash .32s ease-out}.foe .actor.attack .blade{animation-delay:.14s}.actor.hit .sprite{animation:hit .34s ease-out}.fighter:not(.foe) .actor.hit .sprite{animation-delay:.14s}.fighter .impact{position:absolute;top:9%;left:56%;pointer-events:none;color:#ffe2a0;font-weight:900;font-size:25px;text-shadow:2px 2px #4b2132;opacity:0}.impact.show{animation:damage .55s ease-out}.fighter:not(.foe) .impact.show{animation-delay:.14s}.actor.down{opacity:.42;rotate:-12deg}.foe .actor.arrive{animation:arrive .35s ease-out}@keyframes breathe{50%{translate:0 -4px}}@keyframes lunge{42%{translate:36px -6px;rotate:12deg}}@keyframes counter{42%{translate:-31px -5px;rotate:-12deg}}@keyframes swing{45%{rotate:-100deg}}@keyframes slash{45%{translate:18px -12px;rotate:115deg;filter:brightness(2)}}@keyframes hit{24%{filter:brightness(1.85);translate:5px 0}}@keyframes damage{0%{opacity:1;translate:0 8px;scale:.8}30%{opacity:1;scale:1.1}100%{opacity:0;translate:0 -30px}}@keyframes arrive{from{opacity:0;translate:35px 0}}
+.reels{padding:9px;background:#15121a;border:1px solid #51424c;border-radius:13px;gap:6px}.reels span{display:grid;place-items:center;padding:4px;min-height:48px;background:linear-gradient(#352b3d,#221d2a);color:var(--gold);font-size:24px;line-height:1;border:1px solid #594756}.reels span.win{color:#ffefaa;background:#684337;border-color:#ffd084;box-shadow:inset 0 0 12px #ffcf7777;animation:win .35s ease-out}.reels span.rolling{animation:reel .13s linear infinite}@keyframes reel{50%{filter:blur(2px);translate:0 3px}}@keyframes win{45%{scale:1.07;filter:brightness(1.35)}}.primary{background:linear-gradient(#ffd793,#eea663);box-shadow:0 3px 0 #9f5d3c}.notice{font-size:14px}.gear>div{border-left:3px solid #b47962}.tools{margin-top:17px}@media(max-width:640px){.fighters{min-height:222px;padding-inline:8%;gap:16%}.actor{height:119px}}
+[hidden]{display:none!important}.gear{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.gear>div{padding:7px 8px;font-size:13px}.gear strong{display:block;color:var(--gold)}.gear small{display:block;font-size:13px}.reels span{font-size:20px}.reels span small{font-size:12px;color:#efd9bf;margin-top:2px}dialog{color:#f6ede4;background:#241e28;border:1px solid #9d7361;border-radius:18px;padding:22px;width:min(560px,calc(100% - 26px));max-height:90dvh;box-shadow:0 12px 55px #120e18}dialog::backdrop{background:#100c17bb}.compare-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-block:14px}.compare-grid article{padding:10px;border:1px solid #645165;border-radius:9px;background:#17141d;overflow-wrap:anywhere}.compare-grid article.better{border-color:#86dbab}.compare-grid article p{margin-top:4px}.compare-grid strong{display:block;color:#ffce9a}#comparison[data-result="up"]{color:#a6ebc4}#comparison[data-result="down"]{color:#ffb1a5}.dialog-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+
+.fighters{overflow:hidden}
+.actor .sprite{transform-origin:center bottom}
+.fighters[data-phase="approach"] .fighter .actor{animation:hero-walk-in 940ms linear both}
+.fighters[data-phase="approach"] .foe .actor{animation:enemy-walk-in 940ms linear both}
+.fighters[data-phase="approach"] .leg,.fighters[data-phase="approach"] .arm{animation:stride 280ms ease-in-out infinite alternate}
+.fighters[data-phase="approach"] .leg.second{animation-direction:alternate-reverse}
+.fighters[data-phase="victory"] .foe .actor{animation:fall 440ms ease-in forwards}
+@keyframes hero-walk-in{from{translate:-100% 0}to{translate:0 0}}
+@keyframes enemy-walk-in{from{translate:150% 0}to{translate:0 0}}
+@keyframes stride{from{rotate:-19deg}to{rotate:19deg}}
+@keyframes fall{to{opacity:0;rotate:23deg;translate:22px 12px}}
+.reels{position:relative}
+.reels.jackpot{animation:slot-thump 480ms ease-out}
+.reels.jackpot span.win{background:linear-gradient(115deg,#7b4c52,#ffc36f,#8a4c61);color:#231629;border-color:#ffedab;animation:match-charge 480ms ease-out}
+.reels.jackpot span.win small{color:#281720}
+.reels.jackpot::after{content:attr(data-jackpot);position:absolute;pointer-events:none;inset:auto 0 39%;margin:auto;width:max-content;padding:4px 14px;color:#ffe7b4;background:#2b182d;border:1px solid #ffc77c;border-radius:20px;box-shadow:0 0 18px #ffac6e;animation:jackpot-title 480ms ease-out both}
+@keyframes slot-thump{25%{box-shadow:0 0 23px #ffae73;scale:1.025}60%{scale:.99}}
+@keyframes match-charge{25%{scale:1.09;box-shadow:0 0 17px #ffd48f}75%{scale:1.02}}
+@keyframes jackpot-title{from{opacity:0;translate:0 12px;scale:.82}20%,75%{opacity:1;translate:0 0;scale:1}to{opacity:0;translate:0 -10px}}
+@media(prefers-reduced-motion:reduce){.reels.jackpot::after{display:none}}
+
+.fighters[data-phase="approach"] .fighter:not(.foe) .actor{animation:none}
+.fighters::before{background:repeating-linear-gradient(109deg,#302439 0 35px,#483249 36px 49px,#302439 50px 72px);background-size:216px 100%}
+.fighters::after{background-size:144px 100%,100% 100%}
+.fighters[data-phase="approach"]::before{animation:distant-scroll 1s linear both}
+.fighters[data-phase="approach"]::after{animation:ground-scroll 1s linear both}
+@keyframes distant-scroll{to{background-position:-216px 0}}
+@keyframes ground-scroll{to{background-position:-288px 0,0 0}}
+
+/* Repeating scenery keeps its exact position while combat pauses the walk. */
+.fighters{background:radial-gradient(ellipse at 58% 18%,#9e6076 0,#4c344f 32%,#251c32 70%)}
+.fighters::before{inset:0;clip-path:none;background:
+  radial-gradient(ellipse at 26% 44%,#ffc17b 0 2px,#e98b6144 4px,transparent 18px),
+  repeating-linear-gradient(104deg,#30223999 0 18px,#65415a88 20px 27px,transparent 29px 64px),
+  linear-gradient(transparent 16%,#292037bb 76%,#16121d);
+  background-size:196px 100%,196px 100%,100% 100%;animation:distant-drift 4.1s linear infinite paused}
+.fighters::after{top:58%;clip-path:none;border-top:2px solid #b0777180;background:
+  radial-gradient(ellipse 12px 4px at 26px 22%,#c58b79 20%,#754956 57%,transparent 70%),
+  radial-gradient(ellipse 17px 5px at 116px 62%,#b58579 20%,#50323e 60%,transparent 71%),
+  repeating-linear-gradient(122deg,transparent 0 82px,#30212d 83px 87px,#9c6c67 88px 90px,transparent 91px 123px),
+  linear-gradient(#775055,#4e3543 62%,#281d2b);
+  background-size:176px 100%,176px 100%,176px 100%,100% 100%;animation:mine-floor-drift 620ms linear infinite paused}
+.fighters[data-phase="approach"]::before{animation:distant-drift 4.1s linear infinite}
+.fighters[data-phase="approach"]::after{animation:mine-floor-drift 620ms linear infinite}
+@keyframes distant-drift{to{background-position:-196px 0,-196px 0,0 0}}
+@keyframes mine-floor-drift{to{background-position:-176px 0,-176px 0,-176px 0,0 0}}
+
+.upgrade-box{display:grid;gap:8px;padding-top:8px}.upgrade-box .row{font-size:14px;flex-wrap:wrap;gap:4px 12px}.upgrade-box strong{color:#dec0ff}
+#essenceGauge{width:100%;height:13px;border:1px solid #725582;border-radius:20px;overflow:hidden;background:#181324;appearance:none}
+#essenceGauge::-webkit-progress-bar{background:#181324}
+#essenceGauge::-webkit-progress-value{background:linear-gradient(90deg,#874cbd,#ddaeff);transition:width .18s}
+#essenceGauge::-moz-progress-bar{background:linear-gradient(90deg,#874cbd,#ddaeff)}
+#upgrade:enabled{color:#241530;background:linear-gradient(#f0cbff,#b57aea);font-weight:bold;box-shadow:0 0 14px #b878e85e}
+.reels.upgrading{animation:forge-flash 570ms ease-out}
+.reels.upgrading::before{content:"";position:absolute;z-index:1;pointer-events:none;inset:0;border-radius:inherit;background:linear-gradient(105deg,transparent 20%,#f1ccff 50%,transparent 75%);animation:forge-sweep 570ms ease-out both}
+@keyframes forge-flash{22%{border-color:#edd0ff;box-shadow:0 0 26px #c984ff;scale:1.025}55%{scale:.995}}
+@keyframes forge-sweep{from{opacity:0;clip-path:inset(0 100% 0 0)}28%{opacity:.75}to{opacity:0;clip-path:inset(0 0 0 100%)}}
+
+:root{--gold:#f7cf8e;--line:#3d4059;--surface:#161929}
+body{background:#080b14;color:#f6ead8}
+main{width:100%;max-width:540px;min-height:min(100dvh,960px);padding:10px 9px 20px;margin:auto;background:radial-gradient(ellipse at 50% 15%,#232641,#101322 52%,#0d101c);border-inline:1px solid #292c44}
+header{margin:0 0 8px;padding:2px 5px;gap:8px}.wallet{background:#111525;border-color:#55506b;padding:4px 8px;font-size:14px;line-height:1.4}h1{font-family:Georgia,"Malgun Gothic",serif;font-size:clamp(20px,5.7vw,32px);letter-spacing:-.07em;text-shadow:0 2px #42334a;color:#ffe2a0}
+.grid{grid-template-columns:1fr;gap:8px}.panel{background:linear-gradient(145deg,#21243a,#15192a 63%);border-color:#4b455b;border-radius:11px;box-shadow:0 3px #0a0c15;padding:9px}.arena{padding:0}.arena .row{padding:4px 9px;background:#14192b}.arena .tag{font-size:13px;background:#332b39;color:#f6d498;padding:3px 8px}
+.fighters{min-height:0;height:clamp(172px,52vw,248px);padding:0 7% 8px;gap:12%;background:#192339}
+.fighters::before{background:linear-gradient(transparent 52%,#0e101e94 90%),url("assets/tower-hall.webp");background-size:100% 100%,auto 100%;background-position:0 0,25% 0;animation:tower-drift 9s linear infinite paused}
+.fighters[data-phase="approach"]::before{animation:tower-drift 9s linear infinite}
+@keyframes tower-drift{to{background-position:0 0,100% 0}}
+.fighters::after{top:65%;border:0;background:radial-gradient(ellipse 16px 3px at 38px 54%,#b3adc454 20%,transparent 75%),repeating-linear-gradient(112deg,transparent 0 72px,#7d89aa50 73px 75px,transparent 76px 114px),linear-gradient(transparent 0,#1a203c75 75%);background-size:144px 100%,144px 100%,100% 100%;animation:floor-slide 650ms linear infinite paused}
+.fighters[data-phase="approach"]::after{animation:floor-slide 650ms linear infinite}
+@keyframes floor-slide{to{background-position:-144px 0,-144px 0,0 0}}
+.fighter{z-index:0}.party{flex:1.45}.actor{height:clamp(105px,29vw,150px)}.actor::before{width:46%;bottom:1px}
+.party .actor{width:62%;margin-left:auto}.party .witch{position:absolute;bottom:49px;left:-10%;width:58%;margin:0;z-index:-1;scale:.85;transform-origin:center bottom}
+.actor img{position:absolute;bottom:0;left:50%;width:138%;height:113%;object-fit:contain;object-position:50% 100%;transform:translateX(-50%);filter:drop-shadow(0 4px 3px #161021cc);animation:art-idle 1.75s ease-in-out infinite}
+.actor img[hidden]{display:none}.foe .actor img{width:150%;height:105%}
+.fighters[data-phase="approach"] .party .actor img{animation:art-walk .29s ease-in-out infinite alternate}
+@keyframes art-idle{50%{translate:0 -3px}}@keyframes art-walk{from{translate:0 -1px;rotate:-2deg}to{translate:0 -6px;rotate:2deg}}
+.actor.attack:not(.witch)::after,.witch.attack::after{content:"";position:absolute;z-index:2;pointer-events:none;left:49%;top:29%;width:60%;height:44%;border-right:5px solid #ff985d;border-radius:50%;box-shadow:5px 0 9px #f9495d;animation:attack-trail .3s ease-out both}
+.witch.attack{animation:casting .33s ease-out}.witch.attack::after{left:80%;top:42%;width:19%;height:15%;background:#ffda85;border:0;box-shadow:0 0 14px #ffaf42;animation:witch-bolt .33s linear both}
+@keyframes attack-trail{from{opacity:0;rotate:-60deg}40%{opacity:1}to{opacity:0;rotate:65deg}}
+@keyframes casting{35%{translate:-5px -4px}}
+@keyframes witch-bolt{from{translate:0 0;opacity:1}to{translate:clamp(85px,39vw,204px) -4px;opacity:0}}
+.actor.hit img{animation:art-hit .32s ease-out}@keyframes art-hit{30%{filter:brightness(1.65) drop-shadow(0 0 6px #ff9c76)}}
+.fighter strong{font-size:13px}.fighter small{font-size:12px}.arena #battleNote{min-height:0;padding:5px 9px;font-size:12px}.team-damage{display:flex;gap:8px;flex-wrap:wrap;color:#ddc8aa;font-size:12px;padding:4px 9px 6px;background:#16182a}.team-damage span+span{color:#f6cd88}
+.reels{margin:7px 0;gap:4px;padding:5px}.reels span{min-height:42px;grid-template-rows:auto auto;align-content:center;padding:3px 0;font-size:20px;line-height:1}.reels span small{font-size:11px}.reels span[data-owner="warrior"]:not(.win){color:#f2ab99}.reels span[data-owner="witch"]:not(.win){color:#f7d27e}
+.primary{min-height:43px;padding:8px;background:linear-gradient(#ffde9c,#dc924e);box-shadow:0 2px #9e5e40}.notice{margin-top:5px;min-height:0;font-size:12px}.upgrade-box{gap:4px;padding-top:6px}.upgrade-box button{min-height:36px;padding:4px}.upgrade-box .row{font-size:12px}
+summary{cursor:pointer;min-height:32px;color:#f5cd8c;font-weight:bold}.gear-groups{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gear-groups h3{margin:0;font-size:14px}.gear{margin:4px 0;grid-template-columns:1fr;gap:3px}.gear>div{padding:3px 6px}.gear strong,.gear small{font-size:12px}.tools{margin-top:9px;gap:6px}.tools button{font-size:12px;padding:6px 8px}.dialog-actions button{min-height:44px}
+@media(prefers-reduced-motion:reduce){.actor.attack::after{display:none}}
+
+.party .witch{z-index:0}
+.party .actor{height:clamp(94px,25vw,138px)}
+.actor img{width:133%;height:100%;object-fit:contain}
+.foe .actor img{width:130%;height:98%}
+.actor.down{animation:chibi-fall .36s ease-out both}
+.fighters[data-phase="defeat"] .party .actor.down{animation:chibi-fall .36s ease-out both}
+.fighters[data-phase="defeat"] .party .actor.down img{animation:none}
+.fighters[data-phase="defeat"] .party .actor.down::after{display:none}
+@keyframes chibi-fall{to{opacity:.48;rotate:-24deg;translate:-5px 8px}}
+.fighters[data-phase="approach"] .fighter .actor img{animation:chibi-step .33s ease-in-out infinite}
+.fighters[data-phase="approach"] .party .witch img{animation-delay:.12s}
+@keyframes chibi-step{0%,100%{translate:0 0;rotate:-5deg}42%{translate:3px -9px;rotate:6deg}70%{translate:0 -2px;rotate:2deg}}
+.party .actor.attack:not(.witch){animation:chibi-charge .35s ease-out}
+.party .actor.attack:not(.witch) img{animation:chibi-cleave .35s ease-out}
+.witch.attack img{animation:chibi-cast .35s ease-out}
+.foe .actor.attack img{animation:chibi-cleave .35s .14s ease-out}
+@keyframes chibi-charge{35%{translate:23px -5px}62%{translate:38px 0}}
+@keyframes chibi-cleave{20%{rotate:-16deg}48%{rotate:22deg;filter:brightness(1.22)}}
+@keyframes chibi-cast{27%{rotate:-13deg;translate:-3px -5px}58%{rotate:13deg;filter:brightness(1.3)}}
+.actor img{scale:.5;transform-origin:center bottom}
+.warrior-health{width:62%;margin-left:auto;text-align:center}
+.warrior-health .hp{width:100%;max-width:135px}
+.warrior-health small{overflow-wrap:anywhere}
+
+.fighters{--hall-tile:clamp(620px,175vw,945px);--party-art-height:clamp(47px,12.5vw,69px);--monster-art-height:clamp(51px,14.2vw,74px);display:block;padding:0}
+.fighters::before{background:linear-gradient(transparent 60%,#0e101e91 100%),url("assets/tower-hall-simple.webp");background-size:100% 100%,var(--hall-tile) 100%;background-repeat:no-repeat,repeat-x;background-position:0 0,0 0;animation:hall-scroll 3.8s linear infinite paused}
+.fighters[data-phase="approach"]::before{animation:hall-scroll 3.8s linear infinite}
+@keyframes hall-scroll{to{background-position:0 0,calc(-1 * var(--hall-tile)) 0}}
+.fighters::after{top:70%;background:radial-gradient(ellipse 8px 2px at 26px 30%,#a99caa88 15%,transparent 92%),linear-gradient(110deg,transparent 0 83%,#201f39ad 84% 86%,transparent 87%);background-size:97px 100%,97px 100%;animation:foreground-scroll .42s linear infinite paused}
+.fighters[data-phase="approach"]::after{animation:foreground-scroll .42s linear infinite}
+@keyframes foreground-scroll{to{background-position:-97px 0,-97px 0}}
+.fighter.party,.fighter.foe{position:absolute;bottom:4px;top:0}
+.fighter.party{left:0;width:40%}.fighter.foe{right:1%;width:42%}
+.party .actor,.party .witch,.foe .actor{position:absolute;bottom:25%;width:38%;margin:0;height:var(--party-art-height)}
+.party #heroActor{left:41%}.party .witch{left:11%;scale:.93}
+.foe .actor{left:31%;height:var(--monster-art-height)}
+.actor img,.foe .actor img{inset:auto auto 0 50%;width:auto;height:100%;margin:0;transform:translateX(-50%);scale:none}
+.foe[data-boss="true"]{--monster-scale:1.14}
+.party .actor::before,.foe .actor::before{left:20%;width:60%;height:8px;bottom:0}
+.warrior-health,.monster-health{position:absolute;top:76%;width:max-content;max-width:100%;text-align:center;transform:translateX(-50%);margin:0}
+.warrior-health{left:60%}.monster-health{left:50%}
+.warrior-health .hp{width:calc(var(--party-art-height) * 421 / 440);height:5px;margin:2px auto}
+.monster-health .hp{width:calc(var(--monster-art-height) * 440 / 404 * var(--monster-scale,1));height:5px;margin:2px auto}
+.warrior-health strong,.monster-health strong{font-size:11px;line-height:13px}
+.warrior-health small,.monster-health small{font-size:10px;line-height:11px;white-space:nowrap}
+.fighter .impact{top:46%;z-index:2}.fighter.party .impact{left:60%}
+@media(prefers-reduced-motion:reduce){.fighters[data-phase="approach"]::before,.fighters[data-phase="approach"]::after{animation:none}}
+
+.foe .impact{left:50%;font-size:clamp(12px,3.5vw,18px);font-weight:900;white-space:nowrap;transform:translateX(-50%);background:#171324d9;border-radius:5px;padding:1px 5px;line-height:1.12}
+.foe .damage-warrior{top:27%;color:#ffb29f}
+.foe .damage-witch{top:42%;color:#ffe393}
+
+
+.reels [data-rarity="0"],.reels[data-rarity="0"],.rarity-badge[data-rarity="0"],.rarity-card[data-rarity="0"]{--prize:#e1e7ef;--prize-deep:#737e96}
+.reels [data-rarity="1"],.reels[data-rarity="1"],.rarity-badge[data-rarity="1"],.rarity-card[data-rarity="1"]{--prize:#8dd9ff;--prize-deep:#3766ba}
+.reels [data-rarity="2"],.reels[data-rarity="2"],.rarity-badge[data-rarity="2"],.rarity-card[data-rarity="2"]{--prize:#e7b0ff;--prize-deep:#8451ac}
+.reels [data-rarity="3"],.reels[data-rarity="3"],.rarity-badge[data-rarity="3"],.rarity-card[data-rarity="3"]{--prize:#ffde83;--prize-deep:#9e512f}
+.reels [data-rarity="4"],.reels[data-rarity="4"],.rarity-badge[data-rarity="4"],.rarity-card[data-rarity="4"]{--prize:#ffa0ab;--prize-deep:#9e305f}
+.reels span.win,.reels.jackpot span.win{color:#1c1724;background:linear-gradient(115deg,var(--prize-deep),var(--prize),var(--prize-deep));border-color:var(--prize);box-shadow:inset 0 0 9px var(--prize)}
+.reels span.win small,.reels.jackpot span.win small{color:#1c1724}
+.reels.jackpot span.win{animation:rarity-flash 480ms ease-out}
+.reels.jackpot::after{color:var(--prize);border-color:var(--prize);box-shadow:0 0 20px var(--prize)}
+@keyframes rarity-flash{28%{scale:1.08;box-shadow:0 0 18px var(--prize);filter:brightness(1.2)}}
+
+
+.training{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 9px;background:#222435;border-top:1px solid #49405b;color:#eddbb3;font-size:13px}
+#challenge{min-height:44px;padding:5px 13px;color:#2c1a15;background:linear-gradient(#ffdfa0,#dda157);font-weight:bold}
+
+.rarity-badge{display:inline-block;width:max-content;margin-top:3px;padding:1px 6px;border:1px solid var(--prize);border-radius:5px;background:#171521;color:var(--prize);font-size:12px;font-weight:800;line-height:1.35}
+.gear .rarity-card[data-rarity],.compare-grid .rarity-card[data-rarity]{
+  background:linear-gradient(145deg,color-mix(in srgb,var(--prize-deep) 64%,#13121d),color-mix(in srgb,var(--prize-deep) 40%,#12101a));
+  border:1px solid color-mix(in srgb,var(--prize) 72%,#453c50);
+  border-left:3px solid var(--prize);
+}
+.rarity-card[data-rarity] strong{color:#fff4e5}
+.rarity-card[data-rarity] small{color:#ece2da}
+.compare-grid .rarity-card.better{outline:2px solid #9de4b9;outline-offset:2px}
+
+.spin-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
+#autoSpin{min-height:44px;font-size:13px;border-color:#8c759e;background:#262034}
+#autoSpin[aria-pressed="true"]{color:#efe3ff;background:#554076;border-color:#bd9ae6}
+#autoStatus{display:block;margin-top:4px;font-size:12px}
+</style>
+</head>
+<body>
+<main>
+<header><div><h1>검과 마녀 · 세계의 탑</h1></div><div class="wallet"><span id="chips">0</span> 칩<br><small><span id="essence">0</span> 마력정수</small></div></header>
+<div class="grid">
+<section class="panel arena" aria-labelledby="combatTitle">
+<div class="row"><h2 id="combatTitle">세계의 탑</h2><strong class="tag" id="stage"></strong></div>
+<div class="fighters" id="fightScene">
+<div class="fighter party">
+<div class="actor witch" id="witchActor"><img src="assets/tower-witch-chibi.webp" alt=""></div>
+<div class="actor" id="heroActor"><img src="assets/tower-warrior-chibi.webp" alt=""></div>
+<span class="impact" id="heroActorImpact" aria-hidden="true"></span>
+<div class="warrior-health" id="warriorHealth"><strong>전사</strong><div class="hp" aria-hidden="true"><span id="heroBar"></span></div><small id="heroHp"></small><small id="regenRate" style="display:block"></small></div>
+</div>
+<div class="fighter foe" id="foe"><div class="actor" id="enemyActor" aria-hidden="true"><img src="assets/tower-monster-chibi.webp" alt=""></div><span class="impact damage-warrior" id="warriorHit" aria-hidden="true"></span><span class="impact damage-witch" id="witchHit" aria-hidden="true"></span><div id="monsterHealth" class="monster-health"><strong id="enemy"></strong><div class="hp" aria-hidden="true"><span id="enemyBar"></span></div><small id="enemyHp"></small></div></div>
+</div>
+<div class="team-damage"><span id="warriorDps"></span><span id="witchDps"></span></div>
+<p id="battleNote" class="muted">전사와 마녀가 탑을 오르는 중입니다.</p>
+<div id="training" class="training" hidden><span id="trainingNote"></span><button id="challenge" type="button">도전</button></div>
+</section>
+<section class="panel" aria-labelledby="slotTitle">
+<div class="row"><h2 id="slotTitle">보물 슬롯</h2><span id="forge"></span></div>
+<div id="reels" class="reels" aria-label="슬롯 결과"><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span><span>·</span></div>
+<div class="spin-controls">
+<button class="primary" id="spin" type="button">슬롯 돌리기</button>
+<button id="autoSpin" type="button" aria-pressed="false">자동 돌리기</button>
+</div>
+<small id="autoStatus" class="muted" hidden></small>
+<p id="spinNote" class="notice muted" role="status">가운데 가로줄에 2개면 일반. 같은 문양 1줄 희귀 · 2줄 상급 · 3줄 전설 · 4줄 이상 신화.</p>
+<div class="upgrade-box">
+<div class="row"><label for="essenceGauge">강화에 필요한 마력정수</label><strong id="essenceCount"></strong></div>
+<progress id="essenceGauge" value="0" max="4"></progress>
+<button id="upgrade" type="button" disabled>강화!</button>
+</div>
+</section>
+<section class="panel" aria-labelledby="gearTitle">
+<button id="reopen" type="button" hidden>획득한 장비 비교</button>
+<details><summary id="gearTitle">장착 장비 · 전사 / 마녀</summary>
+<div class="gear-groups"><div><h3>전사</h3><div class="gear" id="warriorGear"></div></div><div><h3>마녀</h3><div class="gear" id="witchGear"></div></div></div>
+</details>
+</section>
+</div>
+<div class="tools"><button id="restart" type="button">처음부터</button><button id="benchmark" type="button">100단계 시험</button><small id="mode"></small></div>
+</main>
+<dialog id="compare" aria-labelledby="compareTitle">
+<h2 id="compareTitle">장비 비교</h2>
+<p id="comparison" aria-live="polite"></p>
+<div class="compare-grid">
+<article id="oldCard" class="rarity-card"><small>현재 장비</small><strong id="oldName"></strong><span id="oldRarity" class="rarity-badge" hidden></span><p id="oldFormula"></p><small id="oldDetail"></small></article>
+<article id="newCard" class="rarity-card"><small>새 장비</small><strong id="newName"></strong><span id="newRarity" class="rarity-badge" hidden></span><p id="newFormula"></p><small id="newDetail"></small></article>
+</div>
+<div class="dialog-actions"><button id="equip" type="button">장착</button><button id="salvage" type="button">분해</button><button id="dismiss" type="button" autofocus>나중에 결정</button></div>
+</dialog>
+<dialog id="restartDialog" aria-labelledby="restartTitle">
+<h2 id="restartTitle">처음부터 시작할까요?</h2>
+<p>칩, 장비, 스테이지 진행이 초기화됩니다.</p>
+<div class="dialog-actions">
+<button id="cancelRestart" value="cancel" type="button" autofocus>취소</button><button id="confirmRestart" value="restart" type="button">1단계부터 시작</button>
+</div>
+</dialog>
+<script>
+'use strict';
+const parts = {
+  '전사 무기': {owner:'warrior', icon:'⚔', stat:'weapon', names:['탑길잡이 대검','붉은 쌍검']},
+  '전사 방패': {owner:'warrior', icon:'◈', stat:'hp', names:['성문 방패']},
+  '전사 투구': {owner:'warrior', icon:'⛑', stat:'hp', names:['철빛 투구']},
+  '전사 상의': {owner:'warrior', icon:'♜', stat:'hp', names:['붉은 망토 갑옷']},
+  '전사 신발': {owner:'warrior', icon:'♟', stat:'attack', names:['탑지기 장화']},
+  '마녀 무기': {owner:'witch', icon:'☄', stat:'weapon', names:['황금가지 지팡이','달빛 완드']},
+  '마녀 모자': {owner:'witch', icon:'▲', stat:'regen', names:['별그늘 모자']},
+  '마녀 망토': {owner:'witch', icon:'▥', stat:'regen', names:['밤결 망토']},
+  '마녀 반지': {owner:'witch', icon:'◎', stat:'attack', names:['호박석 반지']},
+  '마녀 부적': {owner:'witch', icon:'✦', stat:'attack', names:['작은 쥐의 부적']}
+};
+const party = {
+  warrior:{name:'전사', weapon:'전사 무기', weight:8n, actor:'heroActor'},
+  witch:{name:'마녀', weapon:'마녀 무기', weight:2n, actor:'witchActor'}
+};
+const symbols = Object.keys(parts);
+const baseHp = 70n;
+const baseDamage = 15n;
+const combatStepMs = 100;
+const paylines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const format = value => {
+  const digits = String(value);
+  return digits.length < 8 ? value.toLocaleString('ko-KR') : digits[0] + '.' + digits.slice(1, 3) + 'e' + (digits.length - 1);
+};
+function power(stage) {
+  const tier = Math.floor((stage - 1) / 5);
+  return (5n + BigInt((stage - 1) % 5)) * (2n ** BigInt(tier));
+}
+const monstersPerStage = 5;
+const bossInterval = 10;
+function enemyAt(stage, encounter = 1) {
+  const boss = stage % bossInterval === 0 && encounter > monstersPerStage;
+  const rush = boss && stage % (2 * bossInterval) === 0;
+  const base = power(stage);
+  const maxHp = base * (rush ? 15n : boss ? 22n : 9n) * 10n;
+  return {boss, rush, maxHp, hp:maxHp, damage:base * (boss ? 3n : 2n) / 2n};
+}
+const rarityNames = ['일반','희귀','상급','전설','신화'];
+const rarityScale = [4n,5n,7n,12n,20n];
+const offensePrecision = 40n;
+function gear(part, rank, rarity = 0, variant = 0) {
+  const {stat, names, owner} = parts[part];
+  const swift = stat === 'weapon' && variant === 1;
+  const multiplier = stat === 'hp' ? 10n : stat === 'weapon' ? (swift ? 2n : 3n) : 1n;
+  const baseValue = power(rank) * multiplier * rarityScale[rarity];
+  const isOffense = stat === 'weapon' || stat === 'attack';
+  const value = isOffense ? baseValue * party[owner].weight : baseValue / 4n;
+  return {part, owner, name:(rarity ? rarityNames[rarity] + ' ' : '') + names[variant], label:names[variant], stat, value, swift, rank, rarity};
+}
+function session(stage = 1) {
+  const rank = Math.max(1, stage - 5);
+  const armor = gear('전사 상의', rank);
+  const equipped = {'전사 무기':gear('전사 무기', rank), '마녀 무기':gear('마녀 무기', rank), '전사 상의':armor};
+  return {stage, encounter:1, challengeStage:null, chips:24, essence:0, rank, equipped, pending:[], autoSpin:false, autoBatch:false, autoNextAt:0,
+    board:null, winning:[], spinNote:newOfferNote, enemy:enemyAt(stage), hp:armor.value + baseHp, healingMs:0, combatMs:0, attackMs:{warrior:0,witch:0}, phase:'approach', phaseMs:0, blocked:false, spinning:false,
+    battleNote:'전사와 마녀가 탑을 오르는 중입니다.'};
+}
+const newOfferNote = '가운데 가로줄에 2개면 일반. 같은 문양 1줄 희귀 · 2줄 상급 · 3줄 전설 · 4줄 이상 신화.';
+let normal = session();
+let game = normal;
+const el = id => document.getElementById(id);
+const reels = [...el('reels').children];
+const gearRows = Object.fromEntries(symbols.map(part => {
+  const row = document.createElement('div');
+  row.className = 'rarity-card';
+  const title = document.createElement('strong');
+  title.textContent = parts[part].icon + ' ' + part;
+  const detail = document.createElement('small');
+  const badge = document.createElement('span');
+  badge.className = 'rarity-badge';
+  badge.hidden = true;
+  row.append(title, detail, badge);
+  el(parts[part].owner + 'Gear').append(row);
+  return [part, {detail, badge}];
+}));
+const dialog = el('compare');
+const total = (stat, owner) => Object.values(game.equipped).reduce((sum, item) => sum + (item.stat === stat && (!owner || item.owner === owner) ? item.value : 0n), 0n);
+const maxHp = () => baseHp + total('hp', 'warrior');
+const healingRate = () => total('regen', 'witch');
+const attackInterval = item => (item.owner === 'witch' ? 1200 : 1000) / (item.swift ? 2 : 1);
+const personalBase = owner => baseDamage * party[owner].weight / 10n;
+const damageScale = owner => owner === 'witch' ? 12n : 10n;
+const roundHit = amount => (amount + 5n * offensePrecision) / (10n * offensePrecision) * 10n;
+const damagePerHit = item => roundHit((personalBase(item.owner) * offensePrecision + item.value + total('attack', item.owner)) * damageScale(item.owner));
+const formatDamage = amount => format(amount / 10n);
+// All supported attack intervals express DPS exactly in sixths.
+function formatDps(sixths) {
+  const hundredths = (sixths * 100n + 3n) / 6n;
+  const decimal = String(hundredths % 100n).padStart(2, '0').replace(/0+$/, '');
+  return format(hundredths / 100n) + (decimal ? '.' + decimal : '');
+}
+const formatStat = stat => stat === 'weapon' ? formatDps : stat === 'attack' ? formatDamage : format;
+const spinCost = () => 6;
+function upgradeCost(rank) {
+  const steps = rank - 1;
+  return 4 + 2 * steps + Math.floor(steps * steps / 4);
+}
+function comparisonValue(item, stat) {
+  if (!item) return 0n;
+  if (stat === 'weapon') return damagePerHit(item) * 600n / BigInt(attackInterval(item));
+  if (stat !== 'attack') return item.value;
+  const weapon = game.equipped[party[item.owner].weapon];
+  const otherAttack = total('attack', item.owner) - (game.equipped[item.part]?.value ?? 0n);
+  const base = (personalBase(item.owner) * offensePrecision + weapon.value + otherAttack) * damageScale(item.owner);
+  return roundHit(base + item.value * damageScale(item.owner)) - roundHit(base);
+}
+function showRarity(badge, item) {
+  badge.hidden = !item;
+  if (!item) {
+    badge.textContent = '';
+    delete badge.dataset.rarity;
+    delete badge.parentElement.dataset.rarity;
+    return;
+  }
+  badge.dataset.rarity = String(item.rarity);
+  badge.parentElement.dataset.rarity = badge.dataset.rarity;
+  badge.textContent = rarityNames[item.rarity];
+}
+function comparisonCard(prefix, item, stat) {
+  el(prefix + 'Name').textContent = item?.label || '미장착';
+  showRarity(el(prefix + 'Rarity'), item);
+  const metric = stat === 'weapon' ? 'DPS' : stat === 'hp' ? '전사 최대 체력' : stat === 'regen' ? '전사 초당 회복' : '한 번 피해';
+  const totalValue = comparisonValue(item, stat);
+  el(prefix + 'Formula').textContent = item && stat === 'weapon'
+    ? formatDamage(damagePerHit(item)) + ' ÷ ' + (attackInterval(item) / 1000) + '초 ' + (totalValue % 3n === 0n ? '=' : '≈') + ' ' + formatDps(totalValue) + ' DPS'
+    : '+' + formatStat(stat)(totalValue) + ' ' + metric;
+  el(prefix + 'Detail').textContent = item
+    ? '등급 ' + item.rank + (stat === 'weapon' ? ' · 한 번 피해는 합산 후 정수로 반올림' : '')
+    : '이 부위에 장착된 장비가 없어요.';
+}
+function salvageValue(item) {
+  return item.rarity > 0 ? 3 : 2;
+}
+function showComparison() {
+  const candidate = game.pending[0];
+  if (!candidate) return;
+  const {part, stat} = candidate;
+  const current = game.equipped[part];
+  const delta = comparisonValue(candidate, stat) - comparisonValue(current, stat);
+  const metric = stat === 'weapon' ? '초당 피해' : stat === 'hp' ? '전사 최대 체력' : stat === 'regen' ? '전사 초당 회복' : '한 번 피해';
+  el('compareTitle').textContent = part + ' 비교 · 남은 장비 ' + game.pending.length + '개';
+  el('comparison').textContent = delta === 0n ? metric + ' 동일'
+    : '새 장비 ' + metric + ' ' + (delta > 0n ? '+' : '−') + formatStat(stat)(delta > 0n ? delta : -delta);
+  el('comparison').dataset.result = delta > 0n ? 'up' : delta < 0n ? 'down' : 'equal';
+  el('oldCard').classList.toggle('better', delta < 0n);
+  el('newCard').classList.toggle('better', delta > 0n);
+  comparisonCard('old', current, stat);
+  comparisonCard('new', candidate, stat);
+  el('salvage').textContent = '분해 · 마력정수 +' + salvageValue(candidate);
+  if (!dialog.open) dialog.showModal();
+}
+function health(bar, label, current, max, display = format) {
+  el(bar).style.width = Number(current * 100n / max) + '%';
+  el(label).textContent = display(current) + ' / ' + display(max);
+}
+function render() {
+  const {enemy, stage, pending} = game;
+  el('chips').textContent = format(game.chips);
+  el('essence').textContent = format(game.essence);
+  el('stage').textContent = stage + '단계 · ' + (enemy.boss ? '보스' : '몬스터 ' + game.encounter + '/' + monstersPerStage);
+  el('enemy').textContent = enemy.rush ? '타락한 탑지기' : enemy.boss ? '철갑 가고일' : '석상 가고일';
+  el('foe').dataset.boss = String(enemy.boss);
+  el('fightScene').dataset.phase = game.phase;
+  for (const [id, member] of Object.entries(party)) {
+    el(member.actor).classList.toggle('down', game.blocked);
+    const weapon = game.equipped[member.weapon];
+    el(id + 'Dps').textContent = member.name + ' ' + formatDps(comparisonValue(weapon, 'weapon')) + ' DPS';
+  }
+  health('heroBar','heroHp',game.hp,maxHp());
+  el('regenRate').textContent = '초당 체력 회복 +' + format(healingRate());
+  health('enemyBar','enemyHp',enemy.hp,enemy.maxHp,formatDamage);
+  el('battleNote').textContent = game.battleNote;
+  el('forge').textContent = '장비 등급 ' + game.rank;
+  el('spin').textContent = '슬롯 돌리기 · ' + spinCost() + '칩';
+  const cost = upgradeCost(game.rank);
+  const gauge = el('essenceGauge');
+  gauge.max = cost;
+  gauge.value = Math.min(game.essence, cost);
+  el('essenceCount').textContent = format(game.essence) + ' / ' + format(cost);
+  el('spin').disabled = game.spinning || pending.length > 0 || game.chips < spinCost();
+  el('autoSpin').setAttribute('aria-pressed', String(game.autoSpin));
+  el('autoSpin').textContent = game.autoSpin ? '자동 정지' : '자동 돌리기';
+  el('autoStatus').hidden = !game.autoSpin;
+  el('autoStatus').textContent = pending.length ? '장비 결정을 기다리는 중'
+    : !game.spinning && game.essence >= cost ? '강화 가능 · 자동 돌리기 일시정지'
+    : !game.spinning && game.chips < spinCost() ? '칩이 모이면 자동으로 돌립니다' : '자동 돌리기 켜짐';
+  el('upgrade').disabled = game.spinning || game.essence < cost;
+  for (const part of symbols) {
+    const item = game.equipped[part];
+    const {detail, badge} = gearRows[part];
+    const label = item?.label || '비어 있음';
+    if (detail.textContent !== label) detail.textContent = label;
+    if (badge.dataset.rarity !== (item ? String(item.rarity) : undefined)) showRarity(badge, item);
+  }
+  el('reopen').hidden = pending.length === 0 || game.spinning;
+  el('reopen').textContent = '획득 장비 ' + pending.length + '개 비교';
+  const training = game.challengeStage !== null;
+  el('training').hidden = !training;
+  el('trainingNote').textContent = training ? stage + '단계 반복 전투 중' : '';
+  el('challenge').textContent = training ? game.challengeStage + '단계 도전' : '도전';
+  el('challenge').disabled = game.blocked;
+  el('restart').disabled = game.spinning;
+  el('benchmark').disabled = game.spinning;
+  el('benchmark').textContent = game === normal ? '100단계 시험' : '일반 플레이로 돌아가기';
+  el('mode').textContent = game === normal ? '' : '시험 전용 진행 상황';
+}
+function resetFight() {
+  game.enemy = enemyAt(game.stage, game.encounter);
+  for (const id of ['warriorHit', 'witchHit']) {
+    el(id).classList.remove('show');
+    el(id).textContent = '';
+  }
+  game.combatMs = 0;
+  game.attackMs = {warrior:0,witch:0};
+  game.phase = 'approach';
+  game.phaseMs = 0;
+  game.blocked = false;
+}
+function animate(id, ...classes) {
+  const element = el(id);
+  element.classList.remove(...classes);
+  void element.offsetWidth;
+  element.classList.add(...classes);
+}
+function strike(attacker, defender, amount) {
+  animate(attacker, 'attack');
+  animate(defender, 'hit');
+  el(defender + 'Impact').textContent = '−' + format(amount);
+  animate(defender + 'Impact', 'show');
+}
+function advanceCombat() {
+  game.phaseMs += combatStepMs;
+  if (game.blocked) {
+    if (game.phaseMs < 600) return;
+    if (game.challengeStage === null) {
+      game.challengeStage = game.stage;
+      game.stage = Math.max(1, game.stage - 1);
+    }
+    enterStage();
+    game.battleNote = game.stage + '단계에서 자동으로 반복 전투를 시작합니다.';
+    return;
+  }
+  game.healingMs += combatStepMs;
+  if (game.healingMs === 1000) {
+    game.healingMs = 0;
+    const healed = game.hp + healingRate();
+    game.hp = healed < maxHp() ? healed : maxHp();
+  }
+  if (game.phase === 'victory') {
+    if (game.phaseMs < 500) return;
+    const totalEncounters = monstersPerStage + (game.stage % bossInterval === 0 ? 1 : 0);
+    if (game.encounter === totalEncounters) {
+      if (game.challengeStage === null) game.stage++;
+      game.encounter = 1;
+    } else {
+      game.encounter++;
+    }
+    resetFight();
+    game.battleNote = game.enemy.boss
+      ? '보스가 반대편에서 접근 중입니다.'
+      : '다음 몬스터가 반대편에서 접근 중입니다.';
+    return;
+  }
+  if (game.phase === 'approach') {
+    if (game.phaseMs >= 1000) {
+      game.phase = 'fight';
+      game.battleNote = '몬스터와 마주쳤습니다. 전투 시작!';
+    }
+    return;
+  }
+  game.combatMs += combatStepMs;
+  const {enemy} = game;
+  for (const [id, member] of Object.entries(party)) {
+    if (enemy.hp === 0n) break;
+    const weapon = game.equipped[member.weapon];
+    game.attackMs[id] += combatStepMs;
+    if (game.attackMs[id] < attackInterval(weapon)) continue;
+    game.attackMs[id] = 0;
+    const damage = damagePerHit(weapon);
+    if (damage === 0n) continue;
+    enemy.hp = enemy.hp > damage ? enemy.hp - damage : 0n;
+    animate(member.actor, 'attack');
+    animate('enemyActor', 'hit');
+    el(id + 'Hit').textContent = member.name + ' −' + formatDamage(damage);
+    animate(id + 'Hit', 'show');
+  }
+  if (enemy.hp === 0n) {
+    const reward = (enemy.boss ? 15 : 5) + Math.floor(Math.log2(game.stage));
+    game.chips += reward;
+    game.battleNote = game.stage + '단계 · ' + (enemy.boss ? '보스 격파' : '몬스터 ' + game.encounter + '/' + monstersPerStage + ' 처치') + ' · +' + reward + '칩';
+    game.phase = 'victory';
+    game.phaseMs = 0;
+    return;
+  }
+  if (game.combatMs % (enemy.rush ? 500 : 1000) === 0) {
+    const damage = enemy.damage < game.hp ? enemy.damage : game.hp;
+    strike('enemyActor', 'heroActor', damage);
+    game.hp -= damage;
+    if (game.hp === 0n) {
+      game.phase = 'defeat';
+      game.phaseMs = 0;
+      game.blocked = true;
+      game.battleNote = '전사와 마녀가 쓰러졌습니다. 반복 전투를 준비합니다.';
+    }
+  }
+}
+function paintCell(index, symbol) {
+  const cell = reels[index];
+  cell.textContent = symbol ? parts[symbol].icon : '·';
+  if (symbol) {
+    const label = document.createElement('small');
+    label.textContent = symbol;
+    cell.append(label);
+  }
+  cell.dataset.owner = symbol ? parts[symbol].owner : '';
+  cell.setAttribute('aria-label', symbol || '빈 칸');
+}
+function paintBoard() {
+  reels.forEach((cell, index) => {
+    paintCell(index, game.board?.[index]);
+    const rarity = game.winning[index];
+    cell.classList.toggle('win', rarity !== undefined);
+    if (rarity === undefined) delete cell.dataset.rarity;
+    else cell.dataset.rarity = String(rarity);
+  });
+}
+function slotMessage(message) {
+  game.spinNote = message;
+  el('spinNote').textContent = message;
+}
+function resolveSpin(board) {
+  const wins = new Map();
+  for (const cells of paylines) {
+    const part = board[cells[0]];
+    if (!cells.every(index => board[index] === part)) continue;
+    if (!wins.has(part)) wins.set(part, []);
+    wins.get(part).push(cells);
+  }
+  const pair = symbols.map(part => [3,4,5].filter(index => board[index] === part))
+    .find(cells => cells.length === 2);
+  const prizes = [...wins].map(([part, lines]) => ({
+    part, rarity:Math.min(4, lines.length), cells:lines.flat()
+  }));
+  if (pair) prizes.push({part:board[pair[0]], rarity:0, cells:pair});
+  game.winning = [];
+  for (const {cells, rarity} of prizes) {
+    cells.forEach(index => {
+      game.winning[index] = Math.max(game.winning[index] ?? 0, rarity);
+    });
+  }
+  if (!prizes.length) {
+    game.essence++;
+    return '장비 문양 불일치 · 마력정수 +1';
+  }
+  game.pending = prizes.map(({part, rarity}) => {
+    const variant = Math.floor(Math.random() * parts[part].names.length);
+    return gear(part, game.rank, rarity, variant);
+  });
+  return rarityNames.map((name, rarity) => {
+    const count = prizes.filter(prize => prize.rarity === rarity).length;
+    return count ? name + ' 장비 ' + count + '개' : '';
+  }).filter(Boolean).reverse().join(' · ') + ' 획득';
+}
+function randomSymbol() {
+  return symbols[Math.floor(Math.random() * symbols.length)];
+}
+function startSpin(automatic = false) {
+  if (game.spinning || game.pending.length > 0 || game.chips < spinCost()) return;
+  game.autoBatch = automatic;
+  game.chips -= spinCost();
+  game.spinning = true;
+  game.winning = [];
+  game.board = reels.map(randomSymbol);
+  slotMessage('슬롯을 돌리는 중…');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  for (let column = 0; column < 3; column++) {
+    const indices = [column, column + 3, column + 6];
+    const preview = () => indices.forEach(index => paintCell(index, randomSymbol()));
+    const timer = reduceMotion ? null : setInterval(preview, 80);
+    indices.forEach(index => {
+      reels[index].classList.remove('win');
+      reels[index].classList.toggle('rolling', !reduceMotion);
+    });
+    setTimeout(() => {
+      if (timer !== null) clearInterval(timer);
+      indices.forEach(index => {
+        reels[index].classList.remove('rolling');
+        paintCell(index, game.board[index]);
+      });
+      if (column === 2) {
+        slotMessage(resolveSpin(game.board));
+        paintBoard();
+        const finish = () => {
+          el('reels').classList.remove('jackpot');
+          game.spinning = false;
+          game.autoNextAt = performance.now() + 350;
+          presentRewards();
+        };
+        const highestRarity = Math.max(0, ...game.pending.map(item => item.rarity));
+        if (game.pending.length && !reduceMotion) {
+          const board = el('reels');
+          board.dataset.jackpot = rarityNames[highestRarity] + ' 장비 당첨';
+          board.dataset.rarity = String(highestRarity);
+          animate('reels', 'jackpot');
+          setTimeout(finish, 480);
+        } else {
+          finish();
+        }
+      }
+    }, reduceMotion ? 0 : 330 + column * 160);
+  }
+  render();
+}
+function maybeAutoSpin() {
+  if (game.autoSpin && game.essence < upgradeCost(game.rank) && !dialog.open && !restartDialog.open && performance.now() >= game.autoNextAt) {
+    startSpin(true);
+  }
+}
+function presentRewards() {
+  let recovered = 0;
+  if (game.autoSpin && game.autoBatch) {
+    while (game.pending.length) {
+      const candidate = game.pending[0];
+      const current = game.equipped[candidate.part];
+      if (!current || comparisonValue(candidate, candidate.stat) > comparisonValue(current, candidate.stat)) break;
+      recovered += salvageValue(game.pending.shift());
+    }
+  }
+  if (recovered) {
+    game.essence += recovered;
+    slotMessage('자동 분해 · 마력정수 +' + recovered + (game.pending.length ? ' · 교환할 장비 확인' : ''));
+  }
+  if (!game.pending.length && dialog.open) dialog.close();
+  render();
+  showComparison();
+}
+el('spin').addEventListener('click', () => startSpin());
+el('autoSpin').addEventListener('click', () => {
+  game.autoSpin = !game.autoSpin;
+  render();
+  maybeAutoSpin();
+});
+el('equip').addEventListener('click', () => {
+  const item = game.pending.shift();
+  if (!item) return;
+  const replaced = game.equipped[item.part];
+  game.equipped[item.part] = item;
+  if (game.hp > maxHp()) game.hp = maxHp();
+  if (replaced) game.essence++;
+  if (game.pending.length === 0) dialog.close();
+  slotMessage(item.name + ' 장착' + (replaced ? ' · 이전 장비 분해로 마력정수 +1' : ''));
+  presentRewards();
+});
+el('salvage').addEventListener('click', () => {
+  const item = game.pending.shift();
+  if (!item) return;
+  const reward = salvageValue(item);
+  game.essence += reward;
+  if (game.pending.length === 0) dialog.close();
+  slotMessage('장비 분해 · 마력정수 +' + reward);
+  presentRewards();
+});
+el('dismiss').addEventListener('click', () => dialog.close());
+el('reopen').addEventListener('click', showComparison);
+dialog.addEventListener('close', () => {
+  (game.pending.length ? el('reopen') : el('spin')).focus();
+});
+el('upgrade').addEventListener('click', () => {
+  const cost = upgradeCost(game.rank);
+  if (game.spinning || game.essence < cost) return;
+  game.essence -= cost;
+  game.rank++;
+  animate('reels', 'upgrading');
+  slotMessage('슬롯 강화 완료 · 이후 나오는 장비 등급 ' + game.rank);
+  render();
+});
+function enterStage() {
+  game.encounter = 1;
+  game.hp = maxHp();
+  game.healingMs = 0;
+  resetFight();
+}
+el('challenge').addEventListener('click', () => {
+  if (game.blocked || game.challengeStage === null) return;
+  game.stage = game.challengeStage;
+  game.challengeStage = null;
+  enterStage();
+  game.battleNote = game.stage + '단계에 도전합니다.';
+  render();
+});
+const restartDialog = el('restartDialog');
+el('restart').addEventListener('click', () => {
+  if (game.spinning) return;
+
+  restartDialog.showModal();
+});
+el('cancelRestart').addEventListener('click', () => restartDialog.close());
+el('confirmRestart').addEventListener('click', () => {
+  restartDialog.close();
+  normal = session();
+  game = normal;
+  paintBoard();
+  slotMessage(game.spinNote);
+  el('witchActor').classList.remove('attack');
+  for (const actor of ['heroActor', 'enemyActor']) {
+    el(actor).classList.remove('attack', 'hit', 'arrive');
+  }
+  for (const id of ['heroActorImpact', 'warriorHit', 'witchHit']) {
+    el(id).classList.remove('show');
+    el(id).textContent = '';
+  }
+  render();
+  el('spin').focus();
+});
+el('benchmark').addEventListener('click', () => {
+  if (game.spinning) return;
+  game.autoSpin = false;
+  game = game === normal ? session(100) : normal;
+  paintBoard();
+  slotMessage(game.spinNote);
+  render();
+  showComparison();
+});
+render();
+setInterval(() => {advanceCombat(); render(); maybeAutoSpin();}, combatStepMs);
+</script>
+</body>
+</html>
