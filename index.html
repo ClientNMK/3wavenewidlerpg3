@@ -137,6 +137,8 @@ summary{cursor:pointer;min-height:32px;color:#f5cd8c;font-weight:bold}.gear-grou
 .fighter.party{left:0;width:40%}.fighter.foe{right:1%;width:42%}
 .party .actor,.party .witch,.foe .actor{position:absolute;bottom:25%;width:38%;margin:0;height:var(--party-art-height)}
 .party #heroActor{left:41%}.party .witch{left:11%;scale:.93}
+.witch-speech{position:absolute;z-index:3;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);padding:3px 8px;border-radius:8px;background:#fff2d8;color:#372541;box-shadow:0 2px 6px #0005;font-size:12px;font-weight:800;line-height:1.25;white-space:nowrap;pointer-events:none}
+.witch-speech::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:#fff2d8;border-bottom:0}
 .foe .actor{left:31%;height:var(--monster-art-height)}
 .actor img,.foe .actor img{inset:auto auto 0 50%;width:auto;height:100%;margin:0;transform:translateX(-50%);scale:none}
 .foe[data-boss="true"]{--monster-scale:1.14}
@@ -179,6 +181,8 @@ summary{cursor:pointer;min-height:32px;color:#f5cd8c;font-weight:bold}.gear-grou
 .rarity-card[data-rarity] strong{color:#fff4e5}
 .rarity-card[data-rarity] small{color:#ece2da}
 .compare-grid .rarity-card.better{outline:2px solid #9de4b9;outline-offset:2px}
+.compare-grid .weapon-dps{font-size:clamp(16px,4vw,22px);font-weight:800;line-height:1.2;margin:8px 0 5px}
+.compare-grid .weapon-stats{display:block;white-space:pre-line;line-height:1.5}
 
 .spin-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
 #autoSpin{min-height:44px;font-size:13px;border-color:#8c759e;background:#262034}
@@ -194,7 +198,7 @@ summary{cursor:pointer;min-height:32px;color:#f5cd8c;font-weight:bold}.gear-grou
 <div class="row"><h2 id="combatTitle">세계의 탑</h2><strong class="tag" id="stage"></strong></div>
 <div class="fighters" id="fightScene">
 <div class="fighter party">
-<div class="actor witch" id="witchActor"><img src="assets/tower-witch-chibi.webp" alt=""></div>
+<div class="actor witch" id="witchActor"><img src="assets/tower-witch-chibi.webp" alt=""><span class="witch-speech" id="witchSpeech" hidden>라미!</span></div>
 <div class="actor" id="heroActor"><img src="assets/tower-warrior-chibi.webp" alt=""></div>
 <span class="impact" id="heroActorImpact" aria-hidden="true"></span>
 <div class="warrior-health" id="warriorHealth"><strong>전사</strong><div class="hp" aria-hidden="true"><span id="heroBar"></span></div><small id="heroHp"></small><small id="regenRate" style="display:block"></small></div>
@@ -216,7 +220,7 @@ summary{cursor:pointer;min-height:32px;color:#f5cd8c;font-weight:bold}.gear-grou
 <p id="spinNote" class="notice muted" role="status">가운데 가로줄에 2개면 일반. 같은 문양 1줄 희귀 · 2줄 상급 · 3줄 전설 · 4줄 이상 신화.</p>
 <div class="upgrade-box">
 <div class="row"><label for="essenceGauge">강화에 필요한 마력정수</label><strong id="essenceCount"></strong></div>
-<progress id="essenceGauge" value="0" max="4"></progress>
+<progress id="essenceGauge" value="0" max="10000"></progress>
 <button id="upgrade" type="button" disabled>강화!</button>
 </div>
 </section>
@@ -249,15 +253,11 @@ summary{cursor:pointer;min-height:32px;color:#f5cd8c;font-weight:bold}.gear-grou
 'use strict';
 const parts = {
   '전사 무기': {owner:'warrior', icon:'⚔', stat:'weapon', names:['탑길잡이 대검','붉은 쌍검']},
-  '전사 방패': {owner:'warrior', icon:'◈', stat:'hp', names:['성문 방패']},
-  '전사 투구': {owner:'warrior', icon:'⛑', stat:'hp', names:['철빛 투구']},
   '전사 상의': {owner:'warrior', icon:'♜', stat:'hp', names:['붉은 망토 갑옷']},
   '전사 신발': {owner:'warrior', icon:'♟', stat:'attack', names:['탑지기 장화']},
   '마녀 무기': {owner:'witch', icon:'☄', stat:'weapon', names:['황금가지 지팡이','달빛 완드']},
-  '마녀 모자': {owner:'witch', icon:'▲', stat:'regen', names:['별그늘 모자']},
   '마녀 망토': {owner:'witch', icon:'▥', stat:'regen', names:['밤결 망토']},
-  '마녀 반지': {owner:'witch', icon:'◎', stat:'attack', names:['호박석 반지']},
-  '마녀 부적': {owner:'witch', icon:'✦', stat:'attack', names:['작은 쥐의 부적']}
+  '마녀 반지': {owner:'witch', icon:'◎', stat:'attack', names:['호박석 반지']}
 };
 const party = {
   warrior:{name:'전사', weapon:'전사 무기', weight:8n, actor:'heroActor'},
@@ -287,21 +287,30 @@ function enemyAt(stage, encounter = 1) {
 }
 const rarityNames = ['일반','희귀','상급','전설','신화'];
 const rarityScale = [4n,5n,7n,12n,20n];
-const offensePrecision = 40n;
-function gear(part, rank, rarity = 0, variant = 0) {
+const maxWeaponRoll = 2000;
+const weaponRollScale = 10000n;
+const offensePrecision = 40n * weaponRollScale;
+function gear(part, rank, rarity = 0, variant = 0, attackRoll = 0) {
   const {stat, names, owner} = parts[part];
   const swift = stat === 'weapon' && variant === 1;
   const multiplier = stat === 'hp' ? 10n : stat === 'weapon' ? (swift ? 2n : 3n) : 1n;
-  const baseValue = power(rank) * multiplier * rarityScale[rarity];
-  const isOffense = stat === 'weapon' || stat === 'attack';
-  const value = isOffense ? baseValue * party[owner].weight : baseValue / 4n;
+  const itemScale = multiplier * rarityScale[rarity];
+  let value;
+  if (stat === 'weapon') {
+    const steps = BigInt(rank - 1);
+    const rolledValue = power(1) * itemScale * party[owner].weight * (weaponRollScale + BigInt(attackRoll));
+    value = rolledValue * 59n ** steps / 50n ** steps;
+  } else {
+    const baseValue = power(rank) * itemScale;
+    value = stat === 'attack' ? baseValue * party[owner].weight * weaponRollScale : baseValue / 4n;
+  }
   return {part, owner, name:(rarity ? rarityNames[rarity] + ' ' : '') + names[variant], label:names[variant], stat, value, swift, rank, rarity};
 }
 function session(stage = 1) {
   const rank = Math.max(1, stage - 5);
   const armor = gear('전사 상의', rank);
   const equipped = {'전사 무기':gear('전사 무기', rank), '마녀 무기':gear('마녀 무기', rank), '전사 상의':armor};
-  return {stage, encounter:1, challengeStage:null, chips:24, essence:0, rank, equipped, pending:[], autoSpin:false, autoBatch:false, autoNextAt:0,
+  return {stage, encounter:1, challengeStage:null, chips:24, essence:0n, rank, equipped, pending:[], autoSpin:false, autoBatch:false, autoNextAt:0,
     board:null, winning:[], spinNote:newOfferNote, enemy:enemyAt(stage), hp:armor.value + baseHp, healingMs:0, combatMs:0, attackMs:{warrior:0,witch:0}, phase:'approach', phaseMs:0, blocked:false, spinning:false,
     battleNote:'전사와 마녀가 탑을 오르는 중입니다.'};
 }
@@ -342,8 +351,8 @@ function formatDps(sixths) {
 const formatStat = stat => stat === 'weapon' ? formatDps : stat === 'attack' ? formatDamage : format;
 const spinCost = () => 6;
 function upgradeCost(rank) {
-  const steps = rank - 1;
-  return 4 + 2 * steps + Math.floor(steps * steps / 4);
+  const steps = BigInt(rank - 1);
+  return 2n * (4n + 2n * steps + steps * steps / 4n);
 }
 function comparisonValue(item, stat) {
   if (!item) return 0n;
@@ -353,6 +362,12 @@ function comparisonValue(item, stat) {
   const otherAttack = total('attack', item.owner) - (game.equipped[item.part]?.value ?? 0n);
   const base = (personalBase(item.owner) * offensePrecision + weapon.value + otherAttack) * damageScale(item.owner);
   return roundHit(base + item.value * damageScale(item.owner)) - roundHit(base);
+}
+function formatWeaponAttack(value) {
+  const hundredths = (value * 100n + offensePrecision / 2n) / offensePrecision;
+  const whole = hundredths / 100n;
+  const fraction = String(hundredths % 100n).padStart(2, '0');
+  return format(whole) + (whole < 10000000n ? '.' + fraction : '');
 }
 function showRarity(badge, item) {
   badge.hidden = !item;
@@ -369,17 +384,36 @@ function showRarity(badge, item) {
 function comparisonCard(prefix, item, stat) {
   el(prefix + 'Name').textContent = item?.label || '미장착';
   showRarity(el(prefix + 'Rarity'), item);
-  const metric = stat === 'weapon' ? 'DPS' : stat === 'hp' ? '전사 최대 체력' : stat === 'regen' ? '전사 초당 회복' : '한 번 피해';
-  const totalValue = comparisonValue(item, stat);
-  el(prefix + 'Formula').textContent = item && stat === 'weapon'
-    ? formatDamage(damagePerHit(item)) + ' ÷ ' + (attackInterval(item) / 1000) + '초 ' + (totalValue % 3n === 0n ? '=' : '≈') + ' ' + formatDps(totalValue) + ' DPS'
-    : '+' + formatStat(stat)(totalValue) + ' ' + metric;
-  el(prefix + 'Detail').textContent = item
-    ? '등급 ' + item.rank + (stat === 'weapon' ? ' · 한 번 피해는 합산 후 정수로 반올림' : '')
-    : '이 부위에 장착된 장비가 없어요.';
+  const headline = el(prefix + 'Formula');
+  const detail = el(prefix + 'Detail');
+  const isWeapon = item?.stat === 'weapon';
+  headline.classList.toggle('weapon-dps', isWeapon);
+  detail.classList.toggle('weapon-stats', isWeapon);
+  if (isWeapon) {
+    const variant = item.swift ? 1 : 0;
+    const min = gear(item.part, item.rank, item.rarity, variant).value;
+    const max = gear(item.part, item.rank, item.rarity, variant, maxWeaponRoll).value;
+    const attacksPerSecond = (1000 / attackInterval(item)).toFixed(2);
+    headline.textContent = formatDps(comparisonValue(item, stat)) + ' 초당 피해';
+    detail.textContent = [
+      '1회 피해 ' + formatDamage(damagePerHit(item)),
+      '초당 공격 ' + attacksPerSecond + '회',
+      '무기 공격력 ' + formatWeaponAttack(item.value),
+      '획득 범위 ' + formatWeaponAttack(min) + '~' + formatWeaponAttack(max),
+      '등급 ' + item.rank
+    ].join('\n');
+    return;
+  }
+  const metric = stat === 'hp' ? '전사 최대 체력' : stat === 'regen' ? '전사 초당 회복' : '한 번 피해';
+  headline.textContent = item ? '+' + formatStat(stat)(comparisonValue(item, stat)) + ' ' + metric : '';
+  detail.textContent = item ? '등급 ' + item.rank : '이 부위에 장착된 장비가 없어요.';
 }
 function salvageValue(item) {
-  return item.rarity > 0 ? 3 : 2;
+  return item.rarity > 0 ? 3n : 2n;
+}
+function gearOrder(candidate, current, delta) {
+  if (delta !== 0n || candidate.stat !== 'weapon' || candidate.label !== current?.label || candidate.rarity !== current.rarity) return delta;
+  return candidate.value - current.value;
 }
 function showComparison() {
   const candidate = game.pending[0];
@@ -389,11 +423,12 @@ function showComparison() {
   const delta = comparisonValue(candidate, stat) - comparisonValue(current, stat);
   const metric = stat === 'weapon' ? '초당 피해' : stat === 'hp' ? '전사 최대 체력' : stat === 'regen' ? '전사 초당 회복' : '한 번 피해';
   el('compareTitle').textContent = part + ' 비교 · 남은 장비 ' + game.pending.length + '개';
-  el('comparison').textContent = delta === 0n ? metric + ' 동일'
+  const order = gearOrder(candidate, current, delta);
+  el('comparison').textContent = delta === 0n ? metric + ' 동일' + (order === 0n ? '' : order > 0n ? ' · 새 무기 기본 공격력 우세' : ' · 현재 무기 기본 공격력 우세')
     : '새 장비 ' + metric + ' ' + (delta > 0n ? '+' : '−') + formatStat(stat)(delta > 0n ? delta : -delta);
-  el('comparison').dataset.result = delta > 0n ? 'up' : delta < 0n ? 'down' : 'equal';
-  el('oldCard').classList.toggle('better', delta < 0n);
-  el('newCard').classList.toggle('better', delta > 0n);
+  el('comparison').dataset.result = order > 0n ? 'up' : order < 0n ? 'down' : 'equal';
+  el('oldCard').classList.toggle('better', order < 0n);
+  el('newCard').classList.toggle('better', order > 0n);
   comparisonCard('old', current, stat);
   comparisonCard('new', candidate, stat);
   el('salvage').textContent = '분해 · 마력정수 +' + salvageValue(candidate);
@@ -424,8 +459,7 @@ function render() {
   el('spin').textContent = '슬롯 돌리기 · ' + spinCost() + '칩';
   const cost = upgradeCost(game.rank);
   const gauge = el('essenceGauge');
-  gauge.max = cost;
-  gauge.value = Math.min(game.essence, cost);
+  gauge.value = game.essence >= cost ? 10000 : Number(game.essence * 10000n / cost);
   el('essenceCount').textContent = format(game.essence) + ' / ' + format(cost);
   el('spin').disabled = game.spinning || pending.length > 0 || game.chips < spinCost();
   el('autoSpin').setAttribute('aria-pressed', String(game.autoSpin));
@@ -438,7 +472,7 @@ function render() {
   for (const part of symbols) {
     const item = game.equipped[part];
     const {detail, badge} = gearRows[part];
-    const label = item?.label || '비어 있음';
+    const label = item ? item.label + (item.stat === 'weapon' ? ' · 무기 공격력 ' + formatWeaponAttack(item.value) : '') : '비어 있음';
     if (detail.textContent !== label) detail.textContent = label;
     if (badge.dataset.rarity !== (item ? String(item.rarity) : undefined)) showRarity(badge, item);
   }
@@ -604,7 +638,8 @@ function resolveSpin(board) {
   }
   game.pending = prizes.map(({part, rarity}) => {
     const variant = Math.floor(Math.random() * parts[part].names.length);
-    return gear(part, game.rank, rarity, variant);
+    const attackRoll = parts[part].stat === 'weapon' ? Math.floor(Math.random() * (maxWeaponRoll + 1)) : 0;
+    return gear(part, game.rank, rarity, variant, attackRoll);
   });
   return rarityNames.map((name, rarity) => {
     const count = prizes.filter(prize => prize.rarity === rarity).length;
@@ -667,12 +702,12 @@ function maybeAutoSpin() {
   }
 }
 function presentRewards() {
-  let recovered = 0;
+  let recovered = 0n;
   if (game.autoSpin && game.autoBatch) {
     while (game.pending.length) {
       const candidate = game.pending[0];
       const current = game.equipped[candidate.part];
-      if (!current || comparisonValue(candidate, candidate.stat) > comparisonValue(current, candidate.stat)) break;
+      if (!current || gearOrder(candidate, current, comparisonValue(candidate, candidate.stat) - comparisonValue(current, candidate.stat)) > 0n) break;
       recovered += salvageValue(game.pending.shift());
     }
   }
@@ -773,6 +808,11 @@ el('benchmark').addEventListener('click', () => {
 });
 render();
 setInterval(() => {advanceCombat(); render(); maybeAutoSpin();}, combatStepMs);
+const witchSpeech = el('witchSpeech');
+setInterval(() => {
+  witchSpeech.hidden = false;
+  setTimeout(() => { witchSpeech.hidden = true; }, 1600);
+}, 10000);
 </script>
 </body>
 </html>
